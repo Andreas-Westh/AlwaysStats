@@ -1,9 +1,9 @@
-# Fabric Example Mod
+# AlwaysStats
 
-## Setup
+A simple & lightweight HUD mod to always display the stats you want.
 
-For setup instructions please see the [fabric documentation page](https://docs.fabricmc.net/develop/getting-started/setting-up) that relates to the IDE that you are using.
+<img width="252" height="123" alt="Ingame example" src="https://github.com/user-attachments/assets/4a92cbea-d1d7-46e2-8e4d-924fe36c7c01" />
 
-## License
+Made because I just wanted to always see some specific stats, slowly working on customizability!
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+Heavily work in progress.
