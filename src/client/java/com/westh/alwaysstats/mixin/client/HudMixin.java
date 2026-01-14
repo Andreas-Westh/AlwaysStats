@@ -1,5 +1,6 @@
 package com.westh.alwaysstats.mixin.client;
 
+import com.westh.alwaysstats.render.StatsRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class HudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void renderFpsOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void renderStatsOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         
         if (client.getDebugOverlay().showDebugScreen()) {
@@ -24,24 +25,6 @@ public class HudMixin {
             return;
         }
 
-        int fps = client.getFps();
-        String fpsText = "FPS: " + fps;
-
-        // Get biome at player's position
-        var pos = client.player.blockPosition();
-        var biomeHolder = client.level.getBiome(pos);
-        String biomeName = biomeHolder.getRegisteredName();
-        if (biomeName.startsWith("minecraft:")) {
-            biomeName = biomeName.substring(10);
-        }
-        String biomeText = "Biome: " + biomeName;
-        
-        // Draw background (sized to fit both lines)
-        int maxWidth = Math.max(client.font.width(fpsText), client.font.width(biomeText));
-        guiGraphics.fill(3, 3, 7 + maxWidth, 28, 0x90000000);
-        
-        // Draw text
-        guiGraphics.drawString(client.font, fpsText, 5, 5, 0xFFFFFFFF);
-        guiGraphics.drawString(client.font, biomeText, 5, 16, 0xFFFFFFFF);
+        StatsRenderer.render(guiGraphics, client);
     }
 }

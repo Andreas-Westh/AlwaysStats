@@ -11,6 +11,11 @@
   "license": "LGPL-3.0-or-later",
   "icon": "assets/alwaysstats/icon.png",
   "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.westh.alwaysstats.AlwaysStatsClient"
+    ]
+  },
   "mixins": [
     {
       "config": "alwaysstats.client.mixins.json",
