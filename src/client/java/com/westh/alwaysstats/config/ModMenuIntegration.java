@@ -50,18 +50,40 @@ public class ModMenuIntegration implements ModMenuApi {
             ConfigCategory statsCategory = builder.getOrCreateCategory(Component.literal("Stats"));
 
             for (StatProvider stat : StatsRenderer.getAllStats()) {
-                statsCategory.addEntry(entryBuilder.startBooleanToggle(
-                                Component.literal(stat.getConfigName()),
-                                config.enabledStats.contains(stat.getConfigKey()))
-                        .setDefaultValue(true)
-                        .setSaveConsumer(enabled -> {
-                            if (enabled) {
-                                config.enabledStats.add(stat.getConfigKey());
-                            } else {
-                                config.enabledStats.remove(stat.getConfigKey());
-                            }
-                        })
-                        .build());
+                if (stat.getConfigKey().equals("direction")) {
+                    statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                    Component.literal(stat.getConfigName()),
+                                    config.enabledStats.contains(stat.getConfigKey()))
+                            .setDefaultValue(true)
+                            .setSaveConsumer(enabled -> {
+                                if (enabled) {
+                                    config.enabledStats.add(stat.getConfigKey());
+                                } else {
+                                    config.enabledStats.remove(stat.getConfigKey());
+                                }
+                            })
+                            .build());
+                    statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                    Component.literal("  └ Details"),
+                                    config.directionDetails)
+                            .setDefaultValue(false)
+                            .setTooltip(Component.literal("Show degrees (e.g. north (45.0°))"))
+                            .setSaveConsumer(newValue -> config.directionDetails = newValue)
+                            .build());
+                } else {
+                    statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                    Component.literal(stat.getConfigName()),
+                                    config.enabledStats.contains(stat.getConfigKey()))
+                            .setDefaultValue(true)
+                            .setSaveConsumer(enabled -> {
+                                if (enabled) {
+                                    config.enabledStats.add(stat.getConfigKey());
+                                } else {
+                                    config.enabledStats.remove(stat.getConfigKey());
+                                }
+                            })
+                            .build());
+                }
             }
                     
             builder.setSavingRunnable(() -> {
