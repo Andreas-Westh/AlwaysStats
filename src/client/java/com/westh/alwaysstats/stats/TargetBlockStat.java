@@ -20,9 +20,9 @@ public class TargetBlockStat implements StatProvider {
     public String getDisplayText(Minecraft client) {
         HitResult hitResult = client.hitResult;
         
-        // Only show when looking at a block (not air/entity/miss)
+        // Show placeholder when not looking at a block
         if (hitResult == null || hitResult.getType() != HitResult.Type.BLOCK) {
-            return null; // Returns null to hide the stat when not looking at a block
+            return getConfigName() + ": ";
         }
         
         BlockHitResult blockHit = (BlockHitResult) hitResult;
