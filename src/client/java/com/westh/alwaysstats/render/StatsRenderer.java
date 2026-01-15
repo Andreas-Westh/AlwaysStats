@@ -8,6 +8,7 @@ import com.westh.alwaysstats.stats.DirectionStat;
 import com.westh.alwaysstats.stats.FpsStat;
 import com.westh.alwaysstats.stats.LightLevelStat;
 import com.westh.alwaysstats.stats.StatProvider;
+import com.westh.alwaysstats.stats.TargetBlockStat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -26,7 +27,8 @@ public class StatsRenderer {
         new BiomeStat(),
         new CoordStat(),
         new DirectionStat(),
-        new LightLevelStat()
+        new LightLevelStat(),
+        new TargetBlockStat()
     );
 
     public static List<StatProvider> getAllStats() {

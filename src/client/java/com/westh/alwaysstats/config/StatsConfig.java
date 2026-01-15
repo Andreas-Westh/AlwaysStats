@@ -21,6 +21,7 @@ public class StatsConfig implements ConfigData {
             enabledStats.add("coords");
             enabledStats.add("direction");
             enabledStats.add("lightLevel");
+            enabledStats.add("targetBlock");
         }
     }
 
