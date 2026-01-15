@@ -21,20 +21,28 @@ public class StatsRenderer {
     private static final int BACKGROUND_COLOR = 0x90000000;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
 
-    private static final List<StatProvider> statProviders = new ArrayList<>();
+    private static final List<StatProvider> ALL_STATS = List.of(
+        new FpsStat(),
+        new BiomeStat(),
+        new CoordStat(),
+        new DirectionStat(),
+        new LightLevelStat()
+    );
 
-    static {
-        statProviders.add(new FpsStat());
-        statProviders.add(new BiomeStat());
-        statProviders.add(new CoordStat());
-        statProviders.add(new DirectionStat());
-        statProviders.add(new LightLevelStat());
+    public static List<StatProvider> getAllStats() {
+        return ALL_STATS;
     }
 
     public static void render(GuiGraphics guiGraphics, Minecraft client) {
         List<String> lines = new ArrayList<>();
 
-        for (StatProvider provider : statProviders) {
+        StatsConfig config = StatsConfig.get(); 
+
+        for (StatProvider provider : ALL_STATS) {
+            if (!config.enabledStats.contains(provider.getConfigKey())) {
+                continue;
+            }
+            
             String text = provider.getDisplayText(client);
             if (text != null) {
                 lines.add(text);

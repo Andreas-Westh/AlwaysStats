@@ -5,12 +5,17 @@ import net.minecraft.client.Minecraft;
 public class CoordStat implements StatProvider {
     
     @Override
+    public String getConfigKey() {
+        return "coords";
+    }
+
+    @Override
+    public String getConfigName() {
+        return "Coords";
+    }
+
+    @Override
     public String getDisplayText(Minecraft client) {
-        if (client.level == null || client.player == null) {
-            return null;
-        }
-        
-        var pos = client.player.blockPosition();
-        return "Coords: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ();
+        return getConfigName() + ": " + client.player.blockPosition().getX() + ", " + client.player.blockPosition().getY() + ", " + client.player.blockPosition().getZ();
     }
 }

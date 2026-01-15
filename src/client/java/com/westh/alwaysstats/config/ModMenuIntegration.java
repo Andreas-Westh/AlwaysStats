@@ -6,6 +6,8 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.network.chat.Component;
+import com.westh.alwaysstats.render.StatsRenderer;
+import com.westh.alwaysstats.stats.StatProvider;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -30,6 +32,23 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.corner = newValue)
                     .build());
 
+            ConfigCategory statsCategory = builder.getOrCreateCategory(Component.literal("Stats"));
+
+            for (StatProvider stat : StatsRenderer.getAllStats()) {
+                statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                Component.literal(stat.getConfigName()),
+                                config.enabledStats.contains(stat.getConfigKey()))
+                        .setDefaultValue(true)
+                        .setSaveConsumer(enabled -> {
+                            if (enabled) {
+                                config.enabledStats.add(stat.getConfigKey());
+                            } else {
+                                config.enabledStats.remove(stat.getConfigKey());
+                            }
+                        })
+                        .build());
+            }
+                    
             builder.setSavingRunnable(() -> {
                 StatsConfig.save();
             });
