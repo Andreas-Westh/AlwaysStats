@@ -12,9 +12,8 @@
   "icon": "assets/alwaysstats/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "com.westh.alwaysstats.AlwaysStatsClient"
-    ]
+    "client": ["com.westh.alwaysstats.AlwaysStatsClient"],
+    "modmenu": ["com.westh.alwaysstats.config.ModMenuIntegration"]
   },
   "mixins": [
     {

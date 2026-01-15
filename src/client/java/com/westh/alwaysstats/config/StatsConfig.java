@@ -1,14 +1,19 @@
 package com.westh.alwaysstats.config;
 
-public class StatsConfig {
-    private static int posX = 5;
-    private static int posY = 5;
-    
-    public static int getPosX() {
-        return posX;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+
+@Config(name = "alwaysstats")
+public class StatsConfig implements ConfigData {
+    public ScreenCorner corner = ScreenCorner.TOP_LEFT;
+
+    public static StatsConfig get() {
+        return AutoConfig.getConfigHolder(StatsConfig.class).getConfig();
     }
-    
-    public static int getPosY() {
-        return posY;
+
+    public static void save() {
+        AutoConfig.getConfigHolder(StatsConfig.class).save();
     }
 }
+
