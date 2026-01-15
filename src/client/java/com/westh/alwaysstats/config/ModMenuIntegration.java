@@ -32,6 +32,21 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.corner = newValue)
                     .build());
 
+            general.addEntry(entryBuilder.startEnumSelector(
+                            Component.literal("Font Size"),
+                            FontSize.class,
+                            config.fontSize)
+                    .setDefaultValue(FontSize.MEDIUM)
+                    .setSaveConsumer(newValue -> config.fontSize = newValue)
+                    .build());
+
+            general.addEntry(entryBuilder.startBooleanToggle(
+                            Component.literal("Show Background"),
+                            config.showBackground)
+                    .setDefaultValue(true)
+                    .setSaveConsumer(newValue -> config.showBackground = newValue)
+                    .build());
+
             ConfigCategory statsCategory = builder.getOrCreateCategory(Component.literal("Stats"));
 
             for (StatProvider stat : StatsRenderer.getAllStats()) {
