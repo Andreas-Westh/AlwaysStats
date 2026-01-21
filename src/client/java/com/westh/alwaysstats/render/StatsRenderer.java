@@ -9,7 +9,7 @@ import com.westh.alwaysstats.stats.DirectionStat;
 import com.westh.alwaysstats.stats.FpsStat;
 import com.westh.alwaysstats.stats.LightLevelStat;
 import com.westh.alwaysstats.stats.StatProvider;
-import com.westh.alwaysstats.stats.TargetBlockStat;
+import com.westh.alwaysstats.stats.TargetStat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -29,7 +29,7 @@ public class StatsRenderer {
         new CoordStat(),
         new DirectionStat(),
         new LightLevelStat(),
-        new TargetBlockStat()
+        new TargetStat()
     );
 
     public static List<StatProvider> getAllStats() {

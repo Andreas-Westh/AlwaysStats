@@ -50,19 +50,20 @@ public class ModMenuIntegration implements ModMenuApi {
             ConfigCategory statsCategory = builder.getOrCreateCategory(Component.literal("Stats"));
 
             for (StatProvider stat : StatsRenderer.getAllStats()) {
+                statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                Component.literal(stat.getConfigName()),
+                                config.enabledStats.contains(stat.getConfigKey()))
+                        .setDefaultValue(true)
+                        .setSaveConsumer(enabled -> {
+                            if (enabled) {
+                                config.enabledStats.add(stat.getConfigKey());
+                            } else {
+                                config.enabledStats.remove(stat.getConfigKey());
+                            }
+                        })
+                        .build());
+
                 if (stat.getConfigKey().equals("direction")) {
-                    statsCategory.addEntry(entryBuilder.startBooleanToggle(
-                                    Component.literal(stat.getConfigName()),
-                                    config.enabledStats.contains(stat.getConfigKey()))
-                            .setDefaultValue(true)
-                            .setSaveConsumer(enabled -> {
-                                if (enabled) {
-                                    config.enabledStats.add(stat.getConfigKey());
-                                } else {
-                                    config.enabledStats.remove(stat.getConfigKey());
-                                }
-                            })
-                            .build());
                     statsCategory.addEntry(entryBuilder.startBooleanToggle(
                                     Component.literal("  └ Details"),
                                     config.directionDetails)
@@ -70,18 +71,13 @@ public class ModMenuIntegration implements ModMenuApi {
                             .setTooltip(Component.literal("Show degrees (e.g. north (45.0°))"))
                             .setSaveConsumer(newValue -> config.directionDetails = newValue)
                             .build());
-                } else {
+                } else if (stat.getConfigKey().equals("target")) {
                     statsCategory.addEntry(entryBuilder.startBooleanToggle(
-                                    Component.literal(stat.getConfigName()),
-                                    config.enabledStats.contains(stat.getConfigKey()))
-                            .setDefaultValue(true)
-                            .setSaveConsumer(enabled -> {
-                                if (enabled) {
-                                    config.enabledStats.add(stat.getConfigKey());
-                                } else {
-                                    config.enabledStats.remove(stat.getConfigKey());
-                                }
-                            })
+                                    Component.literal("  └ Details"),
+                                    config.targetDetails)
+                            .setDefaultValue(false)
+                            .setTooltip(Component.literal("Show variant info (e.g. cat (tabby), villager (farmer))"))
+                            .setSaveConsumer(newValue -> config.targetDetails = newValue)
                             .build());
                 }
             }

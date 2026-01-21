@@ -13,6 +13,7 @@ public class StatsConfig implements ConfigData {
     public FontSize fontSize = FontSize.MEDIUM;
     public boolean showBackground = true;
     public boolean directionDetails = false;
+    public boolean targetDetails = false;
 
     public Set<String> enabledStats = new HashSet<>();
     
@@ -24,7 +25,7 @@ public class StatsConfig implements ConfigData {
             enabledStats.add("coords");
             enabledStats.add("direction");
             enabledStats.add("lightLevel");
-            enabledStats.add("targetBlock");
+            enabledStats.add("target");
         }
     }
 
