@@ -12,6 +12,7 @@ public class StatsConfig implements ConfigData {
     public ScreenCorner corner = ScreenCorner.TOP_LEFT;
     public FontSize fontSize = FontSize.MEDIUM;
     public boolean showBackground = true;
+    public boolean biomeDetails = false;
     public boolean directionDetails = false;
     public boolean targetDetails = false;
 
