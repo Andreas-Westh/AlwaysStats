@@ -63,7 +63,15 @@ public class ModMenuIntegration implements ModMenuApi {
                         })
                         .build());
 
-                if (stat.getConfigKey().equals("direction")) {
+                if (stat.getConfigKey().equals("biome")) {
+                    statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                    Component.literal("  └ Details"),
+                                    config.biomeDetails)
+                            .setDefaultValue(false)
+                            .setTooltip(Component.literal("Show temperature (e.g. plains (0.80°))"))
+                            .setSaveConsumer(newValue -> config.biomeDetails = newValue)
+                            .build());
+                } else if (stat.getConfigKey().equals("direction")) {
                     statsCategory.addEntry(entryBuilder.startBooleanToggle(
                                     Component.literal("  └ Details"),
                                     config.directionDetails)

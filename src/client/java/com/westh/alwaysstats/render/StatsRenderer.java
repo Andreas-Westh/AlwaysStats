@@ -13,6 +13,7 @@ import com.westh.alwaysstats.stats.TargetStat;
 import com.westh.alwaysstats.stats.TimeOfDayStat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,18 +40,18 @@ public class StatsRenderer {
     }
 
     public static void render(GuiGraphics guiGraphics, Minecraft client) {
-        List<String> lines = new ArrayList<>();
+        List<Component> lines = new ArrayList<>();
 
-        StatsConfig config = StatsConfig.get(); 
+        StatsConfig config = StatsConfig.get();
 
         for (StatProvider provider : ALL_STATS) {
             if (!config.enabledStats.contains(provider.getConfigKey())) {
                 continue;
             }
-            
-            String text = provider.getDisplayText(client);
-            if (text != null) {
-                lines.add(text);
+
+            Component component = provider.getDisplayComponent(client);
+            if (component != null) {
+                lines.add(component);
             }
         }
 
@@ -64,7 +65,7 @@ public class StatsRenderer {
 
         // Calculate dimensions at the scaled size
         int maxWidth = 0;
-        for (String line : lines) {
+        for (Component line : lines) {
             maxWidth = Math.max(maxWidth, Math.round(client.font.width(line) * scale));
         }
 
@@ -110,7 +111,7 @@ public class StatsRenderer {
         guiGraphics.pose().scale(scale, scale);
 
         int currentY = 0;
-        for (String line : lines) {
+        for (Component line : lines) {
             guiGraphics.drawString(client.font, line, 0, currentY, TEXT_COLOR);
             currentY += BASE_LINE_HEIGHT;
         }
