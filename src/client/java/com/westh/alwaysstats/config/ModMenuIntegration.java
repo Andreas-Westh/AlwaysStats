@@ -115,6 +115,14 @@ public class ModMenuIntegration implements ModMenuApi {
                             .setTooltip(Component.literal("Show degrees (e.g. north (45.0°))"))
                             .setSaveConsumer(newValue -> config.directionDetails = newValue)
                             .build());
+                } else if (stat.getConfigKey().equals("lastDeath")) {
+                    statsCategory.addEntry(entryBuilder.startBooleanToggle(
+                                    Component.literal("  └ Auto Refresh"),
+                                    config.lastDeathAutoRefresh)
+                            .setDefaultValue(false)
+                            .setTooltip(Component.literal("Clear death point when you reach the death coords"))
+                            .setSaveConsumer(newValue -> config.lastDeathAutoRefresh = newValue)
+                            .build());
                 } else if (stat.getConfigKey().equals("target")) {
                     statsCategory.addEntry(entryBuilder.startBooleanToggle(
                                     Component.literal("  └ Details"),

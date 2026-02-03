@@ -2,7 +2,7 @@
   "required": true,
   "package": "com.westh.alwaysstats.mixin.client",
   "compatibilityLevel": "JAVA_21",
-  "client": ["HudMixin"],
+  "client": ["HudMixin", "DeathMixin"],
   "injectors": {
     "defaultRequire": 1
   }

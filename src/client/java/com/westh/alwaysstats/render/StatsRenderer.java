@@ -11,6 +11,7 @@ import com.westh.alwaysstats.stats.LightLevelStat;
 import com.westh.alwaysstats.stats.StatProvider;
 import com.westh.alwaysstats.stats.TargetStat;
 import com.westh.alwaysstats.stats.TimeOfDayStat;
+import com.westh.alwaysstats.stats.LastDeathStat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -35,7 +36,8 @@ public class StatsRenderer {
         new DirectionStat(),
         new LightLevelStat(),
         new TargetStat(),
-        new TimeOfDayStat()
+        new TimeOfDayStat(),
+        new LastDeathStat()
     );
 
     public static List<StatProvider> getAllStats() {
