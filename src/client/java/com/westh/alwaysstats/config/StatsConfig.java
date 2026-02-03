@@ -12,9 +12,15 @@ public class StatsConfig implements ConfigData {
     public ScreenCorner corner = ScreenCorner.TOP_LEFT;
     public FontSize fontSize = FontSize.MEDIUM;
     public boolean showBackground = true;
+    public boolean alignRight = false;
     public boolean biomeDetails = false;
     public boolean directionDetails = false;
     public boolean targetDetails = false;
+
+    // Custom position and scale (used when corner == CUSTOM)
+    public int customX = 5;
+    public int customY = 5;
+    public float customScale = 0.75f; // Default to MEDIUM scale
 
     public Set<String> enabledStats = new HashSet<>();
     
