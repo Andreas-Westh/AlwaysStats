@@ -6,7 +6,7 @@ public class TimeOfDayStat implements StatProvider {
 
     @Override
     public String getConfigKey() {
-        return "time";
+        return "timeOfDay";
     }
 
     @Override

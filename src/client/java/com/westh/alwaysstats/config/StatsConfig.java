@@ -4,7 +4,9 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Config(name = "alwaysstats")
@@ -23,7 +25,8 @@ public class StatsConfig implements ConfigData {
     public float customScale = 0.75f; // Default to MEDIUM scale
 
     public Set<String> enabledStats = new HashSet<>();
-    
+    public List<String> statOrder = new ArrayList<>();
+
     @Override
     public void validatePostLoad() {
         if (enabledStats.isEmpty()) {
@@ -33,6 +36,12 @@ public class StatsConfig implements ConfigData {
             enabledStats.add("direction");
             enabledStats.add("lightLevel");
             enabledStats.add("target");
+        }
+
+        // Initialize default stat order if empty
+        if (statOrder.isEmpty()) {
+            statOrder.addAll(List.of("fps", "biome", "coords", "direction",
+                                      "lightLevel", "target", "timeOfDay"));
         }
     }
 
