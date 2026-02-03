@@ -25,6 +25,9 @@ public class StatsRenderer {
     private static final int BACKGROUND_COLOR = 0x90000000;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
 
+    public record StatBounds(String key, int y, int height) {}
+    public record PreviewResult(int width, int height, List<StatBounds> statBounds) {}
+
     private static final List<StatProvider> ALL_STATS = List.of(
         new FpsStat(),
         new BiomeStat(),
@@ -39,21 +42,18 @@ public class StatsRenderer {
         return ALL_STATS;
     }
 
-    public static void render(GuiGraphics guiGraphics, Minecraft client) {
-        List<Component> lines = new ArrayList<>();
-
-        StatsConfig config = StatsConfig.get();
-
-        for (StatProvider provider : ALL_STATS) {
-            if (!config.enabledStats.contains(provider.getConfigKey())) {
-                continue;
-            }
-
-            Component component = provider.getDisplayComponent(client);
-            if (component != null) {
-                lines.add(component);
+    private static StatProvider getStatByKey(String key) {
+        for (StatProvider stat : ALL_STATS) {
+            if (stat.getConfigKey().equals(key)) {
+                return stat;
             }
         }
+        return null;
+    }
+
+    public static void render(GuiGraphics guiGraphics, Minecraft client) {
+        StatsConfig config = StatsConfig.get();
+        List<Component> lines = getDisplayLines(client);
 
         if (lines.isEmpty()) {
             return;
@@ -186,13 +186,21 @@ public class StatsRenderer {
 
     /**
      * Render a preview of the stats at a specific position with a given scale.
-     * Returns int[2] with {width, height} of the rendered box.
+     * Returns PreviewResult with width, height, and stat bounds for hit detection.
      */
-    public static int[] renderPreview(GuiGraphics guiGraphics, Minecraft client, int x, int y, float scale) {
+    public static PreviewResult renderPreview(GuiGraphics guiGraphics, Minecraft client, int x, int y, float scale) {
+        return renderPreview(guiGraphics, client, x, y, scale, null);
+    }
+
+    /**
+     * Render a preview with optional highlighted stat (for drag feedback).
+     */
+    public static PreviewResult renderPreview(GuiGraphics guiGraphics, Minecraft client, int x, int y, float scale, String highlightedKey) {
         List<Component> lines = getDisplayLines(client);
+        List<String> statKeys = getEnabledStatKeys(client);
 
         if (lines.isEmpty()) {
-            return new int[]{0, 0};
+            return new PreviewResult(0, 0, List.of());
         }
 
         StatsConfig config = StatsConfig.get();
@@ -232,42 +240,91 @@ public class StatsRenderer {
         // maxWidth at scale 1.0 for text positioning
         int unscaledMaxWidth = Math.round(maxWidth / scale);
 
+        // Build stat bounds for hit detection
+        List<StatBounds> statBounds = new ArrayList<>();
+        int currentYOffset = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            String key = statKeys.get(i);
+            int statY = boxY + PADDING + currentYOffset;
+            statBounds.add(new StatBounds(key, statY, lineHeight));
+            currentYOffset += lineHeight;
+        }
+
+        // Draw highlight behind the dragged stat
+        if (highlightedKey != null) {
+            for (StatBounds bounds : statBounds) {
+                if (bounds.key().equals(highlightedKey)) {
+                    guiGraphics.fill(boxX + 1, bounds.y(), boxX + boxWidth - 1, bounds.y() + bounds.height(), 0x40FFFFFF);
+                    break;
+                }
+            }
+        }
+
         // Draw text with scaling
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x, y);
         guiGraphics.pose().scale(scale, scale);
 
         int currentY = 0;
-        for (Component line : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            Component line = lines.get(i);
+            String key = statKeys.get(i);
             int textX = 0;
             if (rightAligned) {
                 int lineWidth = client.font.width(line);
                 textX = unscaledMaxWidth - lineWidth;
             }
-            guiGraphics.drawString(client.font, line, textX, currentY, TEXT_COLOR);
+            // Use yellow tint for the highlighted/dragged stat
+            int color = (highlightedKey != null && key.equals(highlightedKey)) ? 0xFFFFFF55 : TEXT_COLOR;
+            guiGraphics.drawString(client.font, line, textX, currentY, color);
             currentY += BASE_LINE_HEIGHT;
         }
 
         guiGraphics.pose().popMatrix();
 
-        return new int[]{boxWidth, boxHeight};
+        return new PreviewResult(boxWidth, boxHeight, statBounds);
     }
 
     private static List<Component> getDisplayLines(Minecraft client) {
         List<Component> lines = new ArrayList<>();
         StatsConfig config = StatsConfig.get();
 
-        for (StatProvider provider : ALL_STATS) {
-            if (!config.enabledStats.contains(provider.getConfigKey())) {
+        // Iterate in configured order
+        for (String key : config.statOrder) {
+            if (!config.enabledStats.contains(key)) {
                 continue;
             }
 
-            Component component = provider.getDisplayComponent(client);
-            if (component != null) {
-                lines.add(component);
+            StatProvider provider = getStatByKey(key);
+            if (provider != null) {
+                Component component = provider.getDisplayComponent(client);
+                if (component != null) {
+                    lines.add(component);
+                }
             }
         }
 
         return lines;
+    }
+
+    private static List<String> getEnabledStatKeys(Minecraft client) {
+        List<String> keys = new ArrayList<>();
+        StatsConfig config = StatsConfig.get();
+
+        for (String key : config.statOrder) {
+            if (!config.enabledStats.contains(key)) {
+                continue;
+            }
+
+            StatProvider provider = getStatByKey(key);
+            if (provider != null) {
+                Component component = provider.getDisplayComponent(client);
+                if (component != null) {
+                    keys.add(key);
+                }
+            }
+        }
+
+        return keys;
     }
 }
