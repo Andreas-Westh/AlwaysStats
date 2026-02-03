@@ -2,12 +2,14 @@ package com.westh.alwaysstats.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import com.westh.alwaysstats.render.StatsRenderer;
+import com.westh.alwaysstats.screen.RepositionScreen;
+import com.westh.alwaysstats.stats.StatProvider;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import com.westh.alwaysstats.render.StatsRenderer;
-import com.westh.alwaysstats.stats.StatProvider;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -24,12 +26,38 @@ public class ModMenuIntegration implements ModMenuApi {
 
             ConfigCategory general = builder.getOrCreateCategory(Component.literal("General"));
 
+            // Only show preset positions, not CUSTOM (which is set via reposition screen)
+            ScreenCorner displayCorner = config.corner == ScreenCorner.CUSTOM ? ScreenCorner.TOP_LEFT : config.corner;
+
             general.addEntry(entryBuilder.startEnumSelector(
                             Component.literal("HUD Position"),
                             ScreenCorner.class,
-                            config.corner)
+                            displayCorner)
                     .setDefaultValue(ScreenCorner.TOP_LEFT)
+                    .setEnumNameProvider(corner -> {
+                        // Hide CUSTOM from the dropdown display
+                        if (corner == ScreenCorner.CUSTOM) {
+                            return Component.literal("Custom (use Reposition)");
+                        }
+                        return Component.literal(corner.name().replace("_", " "));
+                    })
                     .setSaveConsumer(newValue -> config.corner = newValue)
+                    .build());
+
+            // Add reposition button (uses a toggle that acts as a button)
+            general.addEntry(entryBuilder.startBooleanToggle(
+                            Component.literal("Reposition HUD..."),
+                            false)
+                    .setDefaultValue(false)
+                    .setTooltip(Component.literal("Click to drag the HUD to a custom position"))
+                    .setSaveConsumer(clicked -> {
+                        if (clicked) {
+                            // Open the reposition screen
+                            Minecraft.getInstance().execute(() -> {
+                                Minecraft.getInstance().setScreen(new RepositionScreen(parent));
+                            });
+                        }
+                    })
                     .build());
 
             general.addEntry(entryBuilder.startEnumSelector(
@@ -45,6 +73,14 @@ public class ModMenuIntegration implements ModMenuApi {
                             config.showBackground)
                     .setDefaultValue(true)
                     .setSaveConsumer(newValue -> config.showBackground = newValue)
+                    .build());
+
+            general.addEntry(entryBuilder.startBooleanToggle(
+                            Component.literal("Align Right"),
+                            config.alignRight)
+                    .setDefaultValue(false)
+                    .setTooltip(Component.literal("Align text to the right side of the HUD"))
+                    .setSaveConsumer(newValue -> config.alignRight = newValue)
                     .build());
 
             ConfigCategory statsCategory = builder.getOrCreateCategory(Component.literal("Stats"));
