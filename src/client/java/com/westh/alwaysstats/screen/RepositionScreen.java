@@ -34,13 +34,29 @@ public class RepositionScreen extends Screen {
     private List<StatsRenderer.StatBounds> lastStatBounds = List.of();
     private List<String> originalStatOrder;  // To restore on cancel
 
+    // Help text fade timing
+    private long openTime;
+    private static final long HINT_FADE_START = 4000;  // Start fading after 4s
+    private static final long HINT_FADE_DURATION = 1000;  // Fade over 1s
+
     public RepositionScreen(Screen parent) {
         super(Component.literal("Reposition HUD"));
         this.parent = parent;
     }
 
+    private boolean notInGame = false;
+
     @Override
     protected void init() {
+        // Guard: reposition screen requires an active world
+        if (minecraft.level == null || minecraft.player == null) {
+            notInGame = true;
+            this.addRenderableWidget(Button.builder(Component.literal("Back"), button -> {
+                minecraft.setScreen(parent);
+            }).bounds(this.width / 2 - 50, this.height / 2 + 15, 100, 20).build());
+            return;
+        }
+
         StatsConfig config = StatsConfig.get();
 
         // Store original stat order to restore on cancel
@@ -64,6 +80,8 @@ public class RepositionScreen extends Screen {
             previewY = pos[1];
         }
 
+        openTime = System.currentTimeMillis();
+
         // Add Done button
         this.addRenderableWidget(Button.builder(Component.literal("Done"), button -> {
             // Save custom position, scale, and stat order
@@ -85,6 +103,14 @@ public class RepositionScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        if (notInGame) {
+            this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+            guiGraphics.drawCenteredString(this.font, "Join a world first to reposition the HUD",
+                    this.width / 2, this.height / 2 - 10, 0xFFFF5555);
+            super.render(guiGraphics, mouseX, mouseY, partialTick);
+            return;
+        }
+
         // Render game world in background
         if (this.minecraft.level != null) {
             this.renderTransparentBackground(guiGraphics);
@@ -99,9 +125,29 @@ public class RepositionScreen extends Screen {
         previewHeight = result.height();
         lastStatBounds = result.statBounds();
 
-        // Draw instruction text
-        guiGraphics.drawCenteredString(this.font, "Drag box to move, corner to resize, stats to reorder", this.width / 2, 20, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, String.format("Scale: %.0f%%", previewScale * 100), this.width / 2, 35, 0xAAAAAA);
+        // Draw help hints (fade out after a few seconds)
+        long elapsed = System.currentTimeMillis() - openTime;
+        boolean interacting = isDragging || isResizing || draggingStatIndex >= 0;
+        int hintAlpha = 255;
+
+        if (interacting) {
+            hintAlpha = 0;
+        } else if (elapsed > HINT_FADE_START) {
+            float fade = 1.0f - Math.min(1.0f, (elapsed - HINT_FADE_START) / (float) HINT_FADE_DURATION);
+            hintAlpha = (int) (255 * fade);
+        }
+
+        if (hintAlpha > 0) {
+            int white = (hintAlpha << 24) | 0xFFFFFF;
+            int grey = (hintAlpha << 24) | 0xAAAAAA;
+
+            guiGraphics.drawCenteredString(this.font, "Drag the box to move it", this.width / 2, 10, white);
+            guiGraphics.drawCenteredString(this.font, "Drag the yellow corner to resize", this.width / 2, 22, grey);
+            guiGraphics.drawCenteredString(this.font, "Drag individual stats to reorder them", this.width / 2, 34, grey);
+        }
+
+        // Always show current scale
+        guiGraphics.drawCenteredString(this.font, String.format("Scale: %.0f%%", previewScale * 100), this.width / 2, this.height - 55, 0xAAAAAA);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
