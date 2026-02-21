@@ -121,7 +121,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 if (stat == null) continue;
 
                 boolean hasSubOptions = key.equals("biome") || key.equals("direction")
-                        || key.equals("target") || key.equals("lastDeath");
+                        || key.equals("target") || key.equals("lightLevel") || key.equals("lastDeath");
 
                 // Build the stat toggle entry
                 BooleanListEntry statToggle = entryBuilder.startBooleanToggle(
@@ -167,6 +167,21 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .setDefaultValue(false)
                                 .setTooltip(Component.literal("Show variant info (e.g. cat (tabby), villager (farmer))"))
                                 .setSaveConsumer(newValue -> config.targetDetails = newValue)
+                                .build());
+                    } else if (key.equals("lightLevel")) {
+                        group.add(entryBuilder.startBooleanToggle(
+                                        Component.literal("Show Block/Sky Split"),
+                                        config.lightLevelSplit)
+                                .setDefaultValue(false)
+                                .setTooltip(Component.literal("Show block light and sky light separately"))
+                                .setSaveConsumer(newValue -> config.lightLevelSplit = newValue)
+                                .build());
+                        group.add(entryBuilder.startBooleanToggle(
+                                        Component.literal("Show Mob Spawn Warning"),
+                                        config.lightLevelDetails)
+                                .setDefaultValue(false)
+                                .setTooltip(Component.literal("Show warning when mobs can spawn (light level ≤ 7)"))
+                                .setSaveConsumer(newValue -> config.lightLevelDetails = newValue)
                                 .build());
                     } else if (key.equals("lastDeath")) {
                         group.add(entryBuilder.startBooleanToggle(

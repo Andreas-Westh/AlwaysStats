@@ -22,6 +22,8 @@ public class StatsConfig implements ConfigData {
     public boolean biomeDetails = false;
     public boolean directionDetails = false;
     public boolean targetDetails = false;
+    public boolean lightLevelDetails = false;
+    public boolean lightLevelSplit = false;
     public boolean lastDeathAutoRefresh = false;
 
     // Custom position and scale (used when corner == CUSTOM)
