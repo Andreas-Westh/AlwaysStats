@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.westh.alwaysstats.stats.DirectionStat;
+
 @Config(name = "alwaysstats")
 public class StatsConfig implements ConfigData {
     public ScreenCorner corner = ScreenCorner.TOP_LEFT;
@@ -20,7 +22,7 @@ public class StatsConfig implements ConfigData {
     public boolean showBackground = true;
     public boolean alignRight = false;
     public boolean biomeDetails = false;
-    public boolean directionDetails = false;
+    public DirectionStat.Options direction = new DirectionStat.Options(false);
     public boolean targetDetails = false;
     public boolean lightLevelDetails = false;
     public boolean lightLevelSplit = false;

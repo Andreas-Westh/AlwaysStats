@@ -299,7 +299,7 @@ public class StatsRenderer {
 
             StatProvider provider = getStatByKey(key);
             if (provider != null) {
-                Component component = provider.getDisplayComponent(client);
+                Component component = provider.render(client, config);
                 if (component != null) {
                     lines.add(component);
                 }
@@ -320,7 +320,7 @@ public class StatsRenderer {
 
             StatProvider provider = getStatByKey(key);
             if (provider != null) {
-                Component component = provider.getDisplayComponent(client);
+                Component component = provider.render(client, config);
                 if (component != null) {
                     keys.add(key);
                 }
