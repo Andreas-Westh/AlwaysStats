@@ -4,6 +4,7 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import com.westh.alwaysstats.render.StatsRenderer;
 import com.westh.alwaysstats.screen.RepositionScreen;
+import com.westh.alwaysstats.stats.DirectionStat;
 import com.westh.alwaysstats.stats.StatProvider;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -155,10 +156,10 @@ public class ModMenuIntegration implements ModMenuApi {
                     } else if (key.equals("direction")) {
                         group.add(entryBuilder.startBooleanToggle(
                                         Component.literal("Show Degrees"),
-                                        config.directionDetails)
+                                        config.direction.showDegrees())
                                 .setDefaultValue(false)
                                 .setTooltip(Component.literal("Show degrees (e.g. north (45.0°))"))
-                                .setSaveConsumer(newValue -> config.directionDetails = newValue)
+                                .setSaveConsumer(newValue -> config.direction = new DirectionStat.Options(newValue))
                                 .build());
                     } else if (key.equals("target")) {
                         group.add(entryBuilder.startBooleanToggle(
