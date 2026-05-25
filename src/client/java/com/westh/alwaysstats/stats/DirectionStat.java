@@ -4,6 +4,7 @@ import com.westh.alwaysstats.config.StatsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.network.chat.Component;
 
 public class DirectionStat implements StatProvider {
     public record Options(boolean showDegrees) {}
@@ -30,7 +31,7 @@ public class DirectionStat implements StatProvider {
     }
 
     @Override
-    public String getDisplayText(Minecraft client) {
-        return getDisplayText(client, StatsConfig.get().direction);
+    public Component render(Minecraft client, StatsConfig config) {
+        return Component.literal(getDisplayText(client, config.direction));
     }
 }
