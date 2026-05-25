@@ -219,4 +219,6 @@ public class ModMenuIntegration implements ModMenuApi {
             default -> "";
         };
     }
+
+    config.direction.showDegrees = newValue;
 }
